@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Unity 技术博客 — 分享 Unity 游戏开发技巧、最佳实践与经验总结" />
+  <title>Unity 技术博客</title>
+  <style>
+    /* ===== CSS Reset & Variables ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --unity-dark: #1a1a2e;
+      --unity-mid:  #16213e;
+      --unity-blue: #0f3460;
+      --unity-accent: #e94560;
+      --unity-cyan:  #00d4ff;
+      --text-primary: #e8eaf6;
+      --text-secondary: #9fa8da;
+      --card-bg: rgba(255,255,255,0.04);
+      --card-border: rgba(0,212,255,0.18);
+      --focus-ring: 0 0 0 3px var(--unity-cyan);
+      --radius: 12px;
+      --transition: 0.25s ease;
+    }
+
+    /* ===== Base ===== */
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--unity-dark);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ===== Focus accessibility ===== */
+    :focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-radius: 4px;
+    }
+
+    a { color: var(--unity-cyan); text-decoration: underline; text-underline-offset: 3px; }
+    a:hover { color: #fff; }
+
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ===== Skip Link ===== */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 1rem;
+      background: var(--unity-cyan);
+      color: var(--unity-dark);
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border-radius: 0 0 var(--radius) var(--radius);
+      z-index: 9999;
+      transition: top var(--transition);
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ===== Header / Nav ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(26,26,46,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--unity-cyan), var(--unity-accent));
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      aria-hidden: true;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: color var(--transition), background var(--transition);
+    }
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      color: var(--unity-cyan);
+      background: rgba(0,212,255,0.08);
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--unity-dark) 0%, var(--unity-blue) 100%);
+      padding: 5rem 1.5rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300d4ff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; max-width: 700px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0,212,255,0.12);
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--unity-cyan);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #fff 30%, var(--unity-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.7rem 1.6rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--unity-cyan);
+      color: var(--unity-dark);
+      box-shadow: 0 4px 20px rgba(0,212,255,0.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(0,212,255,0.55); }
+    .btn-outline {
+      border: 1.5px solid var(--card-border);
+      color: var(--text-primary);
+    }
+    .btn-outline:hover { border-color: var(--unity-cyan); color: var(--unity-cyan); }
+
+    /* ===== Main layout ===== */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    /* ===== Section headings ===== */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .section-title::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.15em;
+      height: 1em;
+      width: 4px;
+      background: var(--unity-cyan);
+      border-radius: 2px;
+    }
+
+    .section-link {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .section-link:hover { color: var(--unity-cyan); }
+
+    /* ===== Featured post ===== */
+    .featured-post {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 3.5rem;
+      transition: border-color var(--transition);
+    }
+    .featured-post:hover { border-color: rgba(0,212,255,0.4); }
+
+    @media (max-width: 680px) {
+      .featured-post { grid-template-columns: 1fr; }
+    }
+
+    .featured-thumbnail {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+      display: grid;
+      place-items: center;
+      font-size: 4rem;
+      min-height: 200px;
+    }
+
+    .featured-body { padding: 2rem 1.75rem; display: flex; flex-direction: column; }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.2rem 0.65rem;
+      border-radius: 99px;
+    }
+    .tag-shader  { background: rgba(233,69,96,0.18);  color: #e94560; }
+    .tag-perf    { background: rgba(0,212,255,0.14);  color: var(--unity-cyan); }
+    .tag-pattern { background: rgba(159,168,218,0.16); color: var(--text-secondary); }
+    .tag-physics { background: rgba(100,200,100,0.16); color: #6dcc6d; }
+    .tag-ui      { background: rgba(255,180,50,0.16);  color: #ffb432; }
+
+    .post-date { font-size: 0.8rem; color: var(--text-secondary); }
+
+    .featured-body h2 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+    }
+
+    .featured-body h2 a { color: var(--text-primary); text-decoration: none; }
+    .featured-body h2 a:hover { color: var(--unity-cyan); }
+
+    .featured-body p { color: var(--text-secondary); font-size: 0.95rem; flex: 1; }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      color: var(--unity-cyan);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+    .read-more::after { content: '→'; transition: transform var(--transition); }
+    .read-more:hover::after { transform: translateX(4px); }
+
+    /* ===== Post grid ===== */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .post-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color var(--transition), transform var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .post-card:hover {
+      border-color: rgba(0,212,255,0.4);
+      transform: translateY(-3px);
+    }
+
+    .card-thumbnail {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, var(--unity-blue), var(--unity-dark));
+      display: grid;
+      place-items: center;
+      font-size: 2.5rem;
+    }
+
+    .card-body { padding: 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+
+    .card-body h3 { font-size: 1.05rem; font-weight: 700; line-height: 1.35; margin: 0.6rem 0 0.5rem; }
+    .card-body h3 a { color: var(--text-primary); text-decoration: none; }
+    .card-body h3 a:hover { color: var(--unity-cyan); }
+
+    .card-body p { font-size: 0.875rem; color: var(--text-secondary); flex: 1; }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .author { display: flex; align-items: center; gap: 0.4rem; }
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--unity-cyan), var(--unity-accent));
+      display: grid;
+      place-items: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--unity-dark);
+      flex-shrink: 0;
+    }
+
+    /* ===== Topics / Tags ===== */
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .topic-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .topic-card:hover {
+      border-color: rgba(0,212,255,0.4);
+      background: rgba(0,212,255,0.05);
+      transform: translateY(-2px);
+      color: var(--unity-cyan);
+    }
+
+    .topic-icon { font-size: 1.8rem; }
+    .topic-name { font-weight: 600; font-size: 0.9rem; }
+    .topic-count { font-size: 0.75rem; color: var(--text-secondary); }
+
+    /* ===== Newsletter ===== */
+    .newsletter {
+      background: linear-gradient(135deg, rgba(15,52,96,0.6), rgba(233,69,96,0.08));
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .newsletter h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .newsletter p  { color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; }
+
+    .subscribe-form {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 440px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .subscribe-form label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    .subscribe-input {
+      flex: 1;
+      min-width: 0;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--card-border);
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+    .subscribe-input::placeholder { color: var(--text-secondary); }
+    .subscribe-input:focus { border-color: var(--unity-cyan); outline: none; }
+
+    .subscribe-btn {
+      padding: 0.7rem 1.4rem;
+      border: none;
+      border-radius: 8px;
+      background: var(--unity-cyan);
+      color: var(--unity-dark);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+      white-space: nowrap;
+    }
+    .subscribe-btn:hover { background: #33dfff; transform: translateY(-1px); }
+
+    /* ===== Footer ===== */
+    footer {
+      background: var(--unity-mid);
+      border-top: 1px solid var(--card-border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    footer nav { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    footer a { color: var(--text-secondary); text-decoration: none; }
+    footer a:hover { color: var(--unity-cyan); }
+
+    /* ===== Utility ===== */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  </style>
+</head>
+<body>
+
+  <!-- Skip to main content (accessibility) -->
+  <a class="skip-link" href="#main-content">跳转到主要内容</a>
+
+  <!-- ===== Header ===== -->
+  <header>
+    <nav aria-label="主导航">
+      <a href="#" class="logo" aria-label="Unity 技术博客首页">
+        <span class="logo-icon" aria-hidden="true">U</span>
+        Unity 技术博客
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#posts" aria-current="page">文章</a></li>
+        <li><a href="#topics">专题</a></li>
+        <li><a href="#newsletter">订阅</a></li>
+        <li><a href="#about">关于</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section aria-labelledby="hero-heading">
+    <div class="hero">
+      <div class="hero-content">
+        <p class="hero-badge" aria-hidden="true">Unity 开发者社区</p>
+        <h1 id="hero-heading">探索 Unity 开发的<br/>无限可能</h1>
+        <p>深度技术文章、最佳实践分享、性能优化技巧——助力每位 Unity 开发者快速成长。</p>
+        <div class="hero-cta">
+          <a href="#posts" class="btn btn-primary">浏览文章</a>
+          <a href="#topics" class="btn btn-outline">探索专题</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Main content ===== -->
+  <main id="main-content">
+
+    <!-- Featured Post -->
+    <section aria-labelledby="featured-heading">
+      <div class="section-header">
+        <h2 class="section-title" id="featured-heading">精选文章</h2>
+      </div>
+
+      <article class="featured-post">
+        <div class="featured-thumbnail" role="img" aria-label="Shader 特效封面图">
+          🎨
+        </div>
+        <div class="featured-body">
+          <div class="post-meta">
+            <span class="tag tag-shader">Shader</span>
+            <time class="post-date" datetime="2026-03-10">2026年3月10日</time>
+          </div>
+          <h2>
+            <a href="#" aria-label="阅读全文：URP Shader Graph 从入门到实战">
+              URP Shader Graph 从入门到实战：打造专业级视觉效果
+            </a>
+          </h2>
+          <p>
+            本文系统讲解 Unity 通用渲染管线（URP）中 Shader Graph 的核心节点与使用技巧，涵盖溶解、流体、描边等常见特效的完整实现思路，附带可直接使用的示例工程。
+          </p>
+          <a href="#" class="read-more" aria-label="阅读 URP Shader Graph 全文">阅读全文</a>
+        </div>
+      </article>
+    </section>
+
+    <!-- Post Grid -->
+    <section aria-labelledby="latest-heading" id="posts">
+      <div class="section-header">
+        <h2 class="section-title" id="latest-heading">最新文章</h2>
+        <a href="#" class="section-link" aria-label="查看全部文章">查看全部 →</a>
+      </div>
+
+      <div class="posts-grid">
+
+        <!-- Card 1 -->
+        <article class="post-card">
+          <div class="card-thumbnail" role="img" aria-label="性能优化封面">⚡</div>
+          <div class="card-body">
+            <div class="post-meta">
+              <span class="tag tag-perf">性能优化</span>
+              <time class="post-date" datetime="2026-03-08">3月8日</time>
+            </div>
+            <h3><a href="#" aria-label="阅读：深入理解 Unity Profiler">深入理解 Unity Profiler：定位与修复性能瓶颈</a></h3>
+            <p>从 CPU/GPU 分析面板到 Memory Profiler，逐步演示如何找到帧率杀手并有效解决。</p>
+            <div class="card-footer">
+              <div class="author">
+                <div class="avatar" aria-hidden="true">陈</div>
+                <span>陈晓明</span>
+              </div>
+              <span>8 分钟阅读</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="post-card">
+          <div class="card-thumbnail" role="img" aria-label="设计模式封面">🧩</div>
+          <div class="card-body">
+            <div class="post-meta">
+              <span class="tag tag-pattern">架构设计</span>
+              <time class="post-date" datetime="2026-03-05">3月5日</time>
+            </div>
+            <h3><a href="#" aria-label="阅读：在 Unity 中实践 MVC 架构">在 Unity 中实践 MVC 架构——以背包系统为例</a></h3>
+            <p>用 MVC 模式将 UI 逻辑、数据层与控制逻辑清晰分离，让代码更易维护与扩展。</p>
+            <div class="card-footer">
+              <div class="author">
+                <div class="avatar" aria-hidden="true">李</div>
+                <span>李雨欣</span>
+              </div>
+              <span>12 分钟阅读</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="post-card">
+          <div class="card-thumbnail" role="img" aria-label="物理系统封面">🎮</div>
+          <div class="card-body">
+            <div class="post-meta">
+              <span class="tag tag-physics">物理系统</span>
+              <time class="post-date" datetime="2026-03-02">3月2日</time>
+            </div>
+            <h3><a href="#" aria-label="阅读：Unity Physics 与 Havok Physics 对比">Unity Physics vs Havok Physics：如何选择与调优</a></h3>
+            <p>两套物理引擎的性能基准测试、API 差异与最佳使用场景，帮助你做出正确决策。</p>
+            <div class="card-footer">
+              <div class="author">
+                <div class="avatar" aria-hidden="true">王</div>
+                <span>王建国</span>
+              </div>
+              <span>10 分钟阅读</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="post-card">
+          <div class="card-thumbnail" role="img" aria-label="UI Toolkit 封面">🖼️</div>
+          <div class="card-body">
+            <div class="post-meta">
+              <span class="tag tag-ui">UI Toolkit</span>
+              <time class="post-date" datetime="2026-02-27">2月27日</time>
+            </div>
+            <h3><a href="#" aria-label="阅读：用 UI Toolkit 构建高性能游戏界面">用 UI Toolkit 构建高性能游戏界面</a></h3>
+            <p>告别 UGUI 的性能痛点，利用 USS 样式表与 UXML 模板快速搭建可复用 UI 组件库。</p>
+            <div class="card-footer">
+              <div class="author">
+                <div class="avatar" aria-hidden="true">赵</div>
+                <span>赵思远</span>
+              </div>
+              <span>9 分钟阅读</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 5 -->
+        <article class="post-card">
+          <div class="card-thumbnail" role="img" aria-label="ECS 封面">🔬</div>
+          <div class="card-body">
+            <div class="post-meta">
+              <span class="tag tag-perf">DOTS / ECS</span>
+              <time class="post-date" datetime="2026-02-20">2月20日</time>
+            </div>
+            <h3><a href="#" aria-label="阅读：DOTS ECS 实战：万级 NPC 同屏方案">DOTS ECS 实战：万级 NPC 同屏完整方案</a></h3>
+            <p>使用 Entity Component System 与 Job System 实现数据驱动的 AI 并行计算，帧率提升 10 倍。</p>
+            <div class="card-footer">
+              <div class="author">
+                <div class="avatar" aria-hidden="true">刘</div>
+                <span>刘磊</span>
+              </div>
+              <span>15 分钟阅读</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 6 -->
+        <article class="post-card">
+          <div class="card-thumbnail" role="img" aria-label="Addressable 封面">📦</div>
+          <div class="card-body">
+            <div class="post-meta">
+              <span class="tag tag-pattern">资源管理</span>
+              <time class="post-date" datetime="2026-02-15">2月15日</time>
+            </div>
+            <h3><a href="#" aria-label="阅读：Addressable Asset System 完全指南">Addressable Asset System 完全指南</a></h3>
+            <p>从分组策略、Bundle 打包到热更新流程，彻底掌握 Unity 资源动态加载的最佳实践。</p>
+            <div class="card-footer">
+              <div class="author">
+                <div class="avatar" aria-hidden="true">孙</div>
+                <span>孙晨</span>
+              </div>
+              <span>11 分钟阅读</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Topics -->
+    <section aria-labelledby="topics-heading" id="topics">
+      <div class="section-header">
+        <h2 class="section-title" id="topics-heading">热门专题</h2>
+      </div>
+
+      <div class="topics-grid" role="list">
+        <a href="#" class="topic-card" role="listitem" aria-label="Shader 开发，共 24 篇文章">
+          <span class="topic-icon" aria-hidden="true">🎨</span>
+          <span class="topic-name">Shader 开发</span>
+          <span class="topic-count">24 篇文章</span>
+        </a>
+        <a href="#" class="topic-card" role="listitem" aria-label="性能优化，共 18 篇文章">
+          <span class="topic-icon" aria-hidden="true">⚡</span>
+          <span class="topic-name">性能优化</span>
+          <span class="topic-count">18 篇文章</span>
+        </a>
+        <a href="#" class="topic-card" role="listitem" aria-label="DOTS / ECS，共 15 篇文章">
+          <span class="topic-icon" aria-hidden="true">🔬</span>
+          <span class="topic-name">DOTS / ECS</span>
+          <span class="topic-count">15 篇文章</span>
+        </a>
+        <a href="#" class="topic-card" role="listitem" aria-label="架构设计，共 21 篇文章">
+          <span class="topic-icon" aria-hidden="true">🧩</span>
+          <span class="topic-name">架构设计</span>
+          <span class="topic-count">21 篇文章</span>
+        </a>
+        <a href="#" class="topic-card" role="listitem" aria-label="UI 开发，共 13 篇文章">
+          <span class="topic-icon" aria-hidden="true">🖼️</span>
+          <span class="topic-name">UI 开发</span>
+          <span class="topic-count">13 篇文章</span>
+        </a>
+        <a href="#" class="topic-card" role="listitem" aria-label="物理与动画，共 9 篇文章">
+          <span class="topic-icon" aria-hidden="true">🎮</span>
+          <span class="topic-name">物理与动画</span>
+          <span class="topic-count">9 篇文章</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section aria-labelledby="newsletter-heading" id="newsletter">
+      <div class="newsletter">
+        <h2 id="newsletter-heading">订阅技术周刊</h2>
+        <p>每周精选 Unity 干货文章，直接发送到你的邮箱，不错过任何重要更新。</p>
+        <form class="subscribe-form" action="#" method="post" onsubmit="handleSubscribe(event)" novalidate>
+          <label for="email-input">电子邮件地址</label>
+          <input
+            id="email-input"
+            class="subscribe-input"
+            type="email"
+            name="email"
+            placeholder="your@email.com"
+            required
+            autocomplete="email"
+            aria-required="true"
+            aria-describedby="email-hint"
+          />
+          <button type="submit" class="subscribe-btn">订阅</button>
+        </form>
+        <p id="email-hint" class="sr-only">输入你的邮箱地址，点击订阅按钮即可加入。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer id="about">
+    <nav aria-label="页脚导航">
+      <a href="#">首页</a>
+      <a href="#">文章归档</a>
+      <a href="#">关于我们</a>
+      <a href="#">投稿指南</a>
+      <a href="#">隐私政策</a>
+    </nav>
+    <p>
+      © 2026 Unity 技术博客 &mdash; 用热爱驱动创作，为开发者服务。<br />
+      <small>本站内容遵循 <a href="#">CC BY-SA 4.0</a> 协议，转载请注明出处。</small>
+    </p>
+  </footer>
+
+  <script>
+    // Smooth subscribe feedback
+    function handleSubscribe(e) {
+      e.preventDefault();
+      const input = document.getElementById('email-input');
+      const btn = e.target.querySelector('.subscribe-btn');
+      if (!input.value || !input.validity.valid) {
+        input.setCustomValidity('请输入有效的邮箱地址');
+        input.reportValidity();
+        return;
+      }
+      btn.textContent = '已订阅 ✓';
+      btn.style.background = '#6dcc6d';
+      input.value = '';
+      input.disabled = true;
+      btn.disabled = true;
+    }
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id], main');
+    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.removeAttribute('aria-current');
+            if (link.getAttribute('href') === '#' + entry.target.id) {
+              link.setAttribute('aria-current', 'page');
+            }
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    document.querySelectorAll('#posts, #topics, #newsletter').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
