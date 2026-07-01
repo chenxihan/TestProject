@@ -25,25 +25,11 @@ body {
 }
 
 .app-shell {
-  width: min(1120px, calc(100% - 32px));
-  margin: 0 auto;
-  padding: 56px 0;
-}
-
-.intro {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  padding-bottom: 32px;
-  border-bottom: 1px solid #d8dee9;
-}
-
-.eyebrow {
-  margin: 0 0 12px;
-  color: #409eff;
-  font-size: 14px;
-  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
 }
 
 h1 {
@@ -51,61 +37,4 @@ h1 {
   color: #111827;
   font-size: clamp(34px, 5vw, 56px);
   line-height: 1.08;
-}
-
-.summary {
-  max-width: 640px;
-  margin: 18px 0 0;
-  color: #4b5563;
-  font-size: 18px;
-  line-height: 1.7;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 28px;
-}
-
-.feature-grid .el-card {
-  border-radius: 8px;
-}
-
-.feature-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin-bottom: 18px;
-  border-radius: 8px;
-  color: #fff;
-  background: #409eff;
-}
-
-h2 {
-  margin: 0 0 10px;
-  font-size: 20px;
-}
-
-.feature-grid p {
-  margin: 0;
-  color: #64748b;
-  line-height: 1.65;
-}
-
-@media (max-width: 760px) {
-  .app-shell {
-    padding: 32px 0;
-  }
-
-  .intro {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .feature-grid {
-    grid-template-columns: 1fr;
-  }
 }
