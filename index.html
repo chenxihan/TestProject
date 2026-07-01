@@ -1,198 +1,25 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登录</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      font-family: Arial, "Microsoft YaHei", sans-serif;
-      color: #1f2937;
-      background:
-        linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(59, 130, 246, 0.16)),
-        #f3f6fb;
-    }
-
-    .login {
-      width: min(92vw, 380px);
-      padding: 32px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      background: #ffffff;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
-    }
-
-    .login h1 {
-      margin: 0 0 8px;
-      font-size: 26px;
-      line-height: 1.2;
-    }
-
-    .login p {
-      margin: 0 0 26px;
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      min-height: 44px;
-      padding: 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
-    }
-
-    .options {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 4px 0 22px;
-      font-size: 14px;
-    }
-
-    .remember {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #4b5563;
-      cursor: pointer;
-    }
-
-    .forgot {
-      color: #2563eb;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .forgot:hover {
-      text-decoration: underline;
-    }
-
-    button {
-      width: 100%;
-      min-height: 46px;
-      border: 0;
-      border-radius: 6px;
-      color: #ffffff;
-      background: #2563eb;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    button:hover {
-      background: #1d4ed8;
-    }
-
-    button:active {
-      transform: translateY(1px);
-    }
-
-    .message {
-      min-height: 20px;
-      margin-top: 16px;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    .message.error {
-      color: #dc2626;
-    }
-
-    .message.success {
-      color: #15803d;
-    }
-  </style>
+    <meta charset="utf-8">
+    <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.global.min.js"></script>
 </head>
 <body>
-  <main class="login">
-    <h1>欢迎登录</h1>
-    <p>请输入账号信息继续访问。</p>
+<div id="hello-vue" class="demo">
+    {{ message }}
+</div>
 
-    <form id="loginForm" novalidate>
-      <div class="field">
-        <label for="username">用户名</label>
-        <input id="username" name="username" type="text" placeholder="请输入用户名" autocomplete="username">
-      </div>
+<script>
+    const HelloVueApp = {
+        data() {
+            return {
+                message: 'Hello Vue!!'
+            }
+        }
+    }
 
-      <div class="field">
-        <label for="password">密码</label>
-        <input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password">
-      </div>
-
-      <div class="options">
-        <label class="remember">
-          <input type="checkbox" name="remember">
-          记住我
-        </label>
-        <a class="forgot" href="#">忘记密码？</a>
-      </div>
-
-      <button type="submit">登录</button>
-      <div id="message" class="message" aria-live="polite"></div>
-    </form>
-  </main>
-
-  <script>
-    const form = document.querySelector("#loginForm");
-    const username = document.querySelector("#username");
-    const password = document.querySelector("#password");
-    const message = document.querySelector("#message");
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      message.className = "message";
-      message.textContent = "";
-
-      if (!username.value.trim()) {
-        message.classList.add("error");
-        message.textContent = "请输入用户名。";
-        username.focus();
-        return;
-      }
-
-      if (!password.value) {
-        message.classList.add("error");
-        message.textContent = "请输入密码。";
-        password.focus();
-        return;
-      }
-
-      message.classList.add("success");
-      message.textContent = "登录成功。";
-      form.reset();
-    });
-  </script>
+    Vue.createApp(HelloVueApp).mount('#hello-vue')
+</script>
 </body>
 </html>
